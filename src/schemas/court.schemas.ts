@@ -16,8 +16,12 @@ export const CrossExamRequestSchema = z.object({
 });
 export type CrossExamRequest = z.infer<typeof CrossExamRequestSchema>;
 
+export const CourtLanguageEnum = z.enum(['hinglish', 'hindi', 'english']);
+export type CourtLanguage = z.infer<typeof CourtLanguageEnum>;
+
 export const VerdictRequestSchema = z.object({
   judge_name: z.string().trim().default('Bhide'),
+  language: CourtLanguageEnum.default('hinglish'),
   party_a_claim: z.string().trim().min(3),
   party_b_claim: z.string().trim().min(3),
   party_a_answer: z.string().trim().min(1, 'Party A answer required'),
