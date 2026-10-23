@@ -16,7 +16,7 @@ export function getEnv(): Env {
     return {
       PORT: 3000,
       NODE_ENV: 'test',
-      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || 'demo_mode_no_key_needed'
     };
   }
 
