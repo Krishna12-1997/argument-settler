@@ -230,6 +230,25 @@
       <div id="stage1Error" class="error-msg"></div>
     </div>
 
+    <!-- Crisis Support Card (Halt Mediation for Serious Harm) -->
+    <div id="crisisCard" class="card" style="display: none; border-color: #f87171; background: #1c151b;">
+      <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">💙 Take a Pause</div>
+      <h2 style="color: #fca5a5; font-size: 1.25rem;">Mediation Suspended: Human Care First</h2>
+      <p id="crisisMessage" style="color: #e2e8f0; font-size: 1rem; line-height: 1.6; margin: 1rem 0;"></p>
+      
+      <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+        <h3 style="color: #fca5a5; font-size: 0.95rem; margin-bottom: 0.5rem;">Support & Crisis Resources:</h3>
+        <ul id="helplinesList" style="list-style: none; padding-left: 0; line-height: 1.8;"></ul>
+      </div>
+
+      <button class="btn" style="background: #374151; color: white; width: auto; padding: 0.6rem 1.2rem;" onclick="resetTrial()">Return to Court</button>
+    </div>
+
+    <!-- Injection Notice Banner -->
+    <div id="injectionNotice" class="badge" style="display: none; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 0.6rem 1rem; font-size: 0.85rem; border: 1px solid #f59e0b; margin-top: 1rem;">
+      🛡️ <strong>Notice from the Bench:</strong> Adversarial injection detected and neutralized. Submission isolated strictly as untrusted witness testimony.
+    </div>
+
     <!-- Stage 2: Cross-Examination -->
     <div id="stage2" class="stage card">
       <div class="badge">STAGE 2: CROSS-EXAMINATION</div>
@@ -294,17 +313,44 @@
       btn.innerText = '🛡️ Running Pre-Inference Guardrail & Interrogating...';
 
       try {
-        // Step 1: Pre-inference guardrail on both parties
+        // Step 1: Pre-inference multi-category guardrail on both parties
         const [guardA, guardB] = await Promise.all([
           fetch('/guard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: claimA }) }).then(r => r.json()),
           fetch('/guard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: claimB }) }).then(r => r.json())
         ]);
 
-        if (!guardA.data?.is_safe || !guardB.data?.is_safe) {
-          errEl.innerText = '⚠️ Court adjourned: Input flagged by safety guardrails for abusive or off-limits content.';
+        // Check for Serious Harm -> Halt comedy completely & show care card
+        const harmCase = guardA.action === 'HALT_MEDIATION' ? guardA : (guardB.action === 'HALT_MEDIATION' ? guardB : null);
+        if (harmCase) {
+          document.getElementById('stage1').style.display = 'none';
+          document.getElementById('crisisMessage').innerText = harmCase.message;
+          const ul = document.getElementById('helplinesList');
+          ul.innerHTML = '';
+          (harmCase.helplines || []).forEach(h => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${h.name}:</strong> <span style="color: #38bdf8;">${h.contact}</span>`;
+            ul.appendChild(li);
+          });
+          document.getElementById('crisisCard').style.display = 'block';
+          return;
+        }
+
+        // Check for Gibberish -> Ask to re-enter
+        if (guardA.action === 'REJECT_GIBBERISH' || guardB.action === 'REJECT_GIBBERISH') {
+          const msg = guardA.action === 'REJECT_GIBBERISH' ? guardA.message : guardB.message;
+          errEl.innerText = '⚠️ ' + msg;
           btn.disabled = false;
           btn.innerText = '⚡ Summon Justice Bhide & Interrogate';
           return;
+        }
+
+        // Check for Prompt Injection -> Warn user & sandbox as untrusted witness claim
+        const hasInjection = guardA.action === 'PROCEED_AS_UNTRUSTED' || guardB.action === 'PROCEED_AS_UNTRUSTED';
+        const noticeEl = document.getElementById('injectionNotice');
+        if (hasInjection) {
+          noticeEl.style.display = 'block';
+        } else {
+          noticeEl.style.display = 'none';
         }
 
         // Step 2: Call Cross-Examination
@@ -397,6 +443,8 @@
     function resetTrial() {
       document.getElementById('stage3').classList.remove('active');
       document.getElementById('stage2').classList.remove('active');
+      document.getElementById('crisisCard').style.display = 'none';
+      document.getElementById('injectionNotice').style.display = 'none';
       document.getElementById('stage1').style.display = 'block';
       document.getElementById('ansA').value = '';
       document.getElementById('ansB').value = '';
