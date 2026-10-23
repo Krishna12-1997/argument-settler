@@ -36,12 +36,13 @@ describe('Court Routes Integration', () => {
     expect(data.success).toBe(false);
   });
 
-  it('successfully handles /guard with mocked AI client', async () => {
+  it('successfully handles /guard with mocked AI client for safe dispute', async () => {
     vi.spyOn(aiClient, 'callStructured').mockResolvedValueOnce({
       data: {
-        is_safe: true,
-        flagged_categories: [],
-        reasoning: 'Safe dispute'
+        classification: 'safe',
+        confidence: 0.99,
+        reasoning: 'Safe dispute',
+        caring_response: null
       },
       telemetry: {
         latencyMs: 120,
@@ -62,8 +63,40 @@ describe('Court Routes Integration', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.success).toBe(true);
-    expect(body.data.is_safe).toBe(true);
-    expect(body.meta.latencyMs).toBe(120);
+    expect(body.classification).toBe('safe');
+    expect(body.action).toBe('PROCEED');
+  });
+
+  it('handles /guard serious_harm by returning HALT_MEDIATION and crisis helplines', async () => {
+    vi.spyOn(aiClient, 'callStructured').mockResolvedValueOnce({
+      data: {
+        classification: 'serious_harm',
+        confidence: 0.98,
+        reasoning: 'Domestic violence threat detected.',
+        caring_response: 'Please reach out to someone who can help.'
+      },
+      telemetry: {
+        latencyMs: 110,
+        inputTokens: 38,
+        outputTokens: 25,
+        model: 'claude-3-5-haiku-latest',
+        retried: false,
+        usedFallback: false
+      }
+    });
+
+    const res = await fetch(`${baseUrl}/guard`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'I will hurt someone tonight.' })
+    });
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.action).toBe('HALT_MEDIATION');
+    expect(body.helplines.length).toBeGreaterThan(0);
+    expect(body.message).toContain('Please reach out');
   });
 
   it('successfully handles /crossexam with mocked AI client', async () => {

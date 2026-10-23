@@ -12,24 +12,40 @@ describe('Courtroom Zod Schemas Unit Tests', () => {
 
   // 1. Guard Output Schema
   describe('GuardOutputSchema', () => {
-    it('accepts valid guardrail output', () => {
-      const payload = {
-        is_safe: true,
-        flagged_categories: [],
-        reasoning: 'Standard petty domestic disagreement, no violence.'
+    it('accepts valid guardrail output for each of the 4 categories', () => {
+      const safePayload = {
+        classification: 'safe',
+        confidence: 0.98,
+        reasoning: 'Standard petty food dispute, no harm.'
       };
-      const result = GuardOutputSchema.safeParse(payload);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.is_safe).toBe(true);
-      }
+      const harmPayload = {
+        classification: 'serious_harm',
+        confidence: 0.99,
+        reasoning: 'Threat of physical harm detected.',
+        caring_response: 'Please talk to someone who cares.'
+      };
+      const injectionPayload = {
+        classification: 'prompt_injection',
+        confidence: 0.95,
+        reasoning: 'Attempted to override system prompt.'
+      };
+      const gibberishPayload = {
+        classification: 'gibberish',
+        confidence: 0.91,
+        reasoning: 'Incomprehensible character smash.'
+      };
+
+      expect(GuardOutputSchema.safeParse(safePayload).success).toBe(true);
+      expect(GuardOutputSchema.safeParse(harmPayload).success).toBe(true);
+      expect(GuardOutputSchema.safeParse(injectionPayload).success).toBe(true);
+      expect(GuardOutputSchema.safeParse(gibberishPayload).success).toBe(true);
     });
 
-    it('rejects invalid data types', () => {
+    it('rejects invalid classifications or non-number confidence', () => {
       const payload = {
-        is_safe: 'yes', // should be boolean
-        flagged_categories: 'harassment', // should be array
-        reasoning: 404
+        classification: 'mildly_annoyed', // not in enum
+        confidence: 'high', // should be number
+        reasoning: 'Invalid'
       };
       const result = GuardOutputSchema.safeParse(payload);
       expect(result.success).toBe(false);
@@ -40,8 +56,7 @@ describe('Courtroom Zod Schemas Unit Tests', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         const issues = result.error.issues.map((i) => i.path[0]);
-        expect(issues).toContain('is_safe');
-        expect(issues).toContain('flagged_categories');
+        expect(issues).toContain('classification');
         expect(issues).toContain('reasoning');
       }
     });
