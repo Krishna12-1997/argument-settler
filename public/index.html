@@ -6,127 +6,175 @@
   <title>Argument Settler | High Court of Pettiness</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <!-- html2canvas for instant export of verdict certificate -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
-      --bg: #0f1117;
-      --card: #181b24;
-      --card-border: #292e3e;
-      --primary: #d4a359;
-      --primary-hover: #e5b66d;
-      --text: #f0f2f8;
-      --text-muted: #9aa1b5;
-      --danger: #ef4444;
-      --accent: #38bdf8;
+      --wood-dark: #120a06;
+      --wood-mid: #22130c;
+      --wood-light: #361f14;
+      --brass: #d4a359;
+      --brass-bright: #fcd34d;
+      --brass-glow: rgba(212, 163, 89, 0.25);
+      --stamp-red: #dc2626;
+      --text: #f8fafc;
+      --text-muted: #a8a29e;
+      --card-bg: rgba(28, 16, 10, 0.92);
+      --border-brass: rgba(212, 163, 89, 0.35);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg);
+      background: radial-gradient(circle at 50% 20%, #2b180f 0%, #120a06 65%, #080402 100%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem;
+      padding: 1.5rem 1rem;
+      background-attachment: fixed;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 680px;
       width: 100%;
     }
 
+    /* Court Header */
     header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-brass);
+      padding-bottom: 1.25rem;
     }
 
-    header h1 {
+    .court-seal {
+      font-size: 2.2rem;
+      filter: drop-shadow(0 0 12px var(--brass-glow));
+      margin-bottom: 0.25rem;
+    }
+
+    h1 {
       font-family: 'Cinzel', serif;
-      font-size: 2.4rem;
-      letter-spacing: 2px;
-      color: var(--primary);
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: var(--brass-bright);
       text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.8rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
     header p {
+      color: var(--brass);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* Language Switcher */
+    .lang-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .lang-btn {
+      background: rgba(34, 19, 12, 0.8);
+      border: 1px solid var(--border-brass);
       color: var(--text-muted);
-      margin-top: 0.5rem;
-      font-size: 1.05rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
+    .lang-btn.active {
+      background: var(--brass);
+      color: #120a06;
+      border-color: var(--brass-bright);
+      font-weight: 700;
+      box-shadow: 0 0 10px var(--brass-glow);
     }
 
-    @media (max-width: 768px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
-
+    /* Card styling */
     .card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border: 1px solid var(--border-brass);
       border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      padding: 1.25rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      margin-bottom: 1.25rem;
     }
 
     .card h2 {
-      font-size: 1.1rem;
-      color: var(--primary);
-      margin-bottom: 0.75rem;
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      color: var(--brass);
+      margin-bottom: 0.6rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     textarea {
       width: 100%;
-      height: 120px;
-      background: #0d0f14;
-      border: 1px solid var(--card-border);
+      height: 100px;
+      background: rgba(12, 6, 4, 0.8);
+      border: 1px solid var(--border-brass);
       border-radius: 8px;
       padding: 0.75rem;
       color: var(--text);
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       resize: vertical;
       outline: none;
       transition: border-color 0.2s;
     }
 
     textarea:focus {
-      border-color: var(--primary);
+      border-color: var(--brass-bright);
+      box-shadow: 0 0 8px var(--brass-glow);
     }
 
+    .grid-party {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
       width: 100%;
-      background: var(--primary);
-      color: #0b0c10;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.9rem 1.5rem;
-      border: none;
+      background: linear-gradient(180deg, #d4a359 0%, #b88636 100%);
+      color: #120a06;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 0.85rem 1.2rem;
+      border: 1px solid var(--brass-bright);
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .btn:hover:not(:disabled) {
-      background: var(--primary-hover);
+      background: linear-gradient(180deg, #fcd34d 0%, #d4a359 100%);
       transform: translateY(-1px);
+      box-shadow: 0 6px 20px var(--brass-glow);
     }
 
     .btn:disabled {
@@ -136,72 +184,157 @@
 
     .stage {
       display: none;
-      margin-top: 1.5rem;
     }
 
     .stage.active {
       display: block;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
-    .badge {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge-stage {
       display: inline-block;
-      padding: 0.25rem 0.6rem;
       font-size: 0.75rem;
-      border-radius: 6px;
+      font-weight: 800;
+      color: var(--brass-bright);
       background: rgba(212, 163, 89, 0.15);
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    .telemetry {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.8rem;
-      color: var(--accent);
-      margin-top: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      background: rgba(56, 189, 248, 0.08);
-      border-radius: 6px;
-    }
-
-    .verdict-box {
-      border-left: 4px solid var(--primary);
-      padding: 1.5rem;
-      background: #141721;
-      border-radius: 8px;
-      margin-top: 1rem;
-    }
-
-    .verdict-box h3 {
-      font-family: 'Cinzel', serif;
-      color: var(--primary);
-      font-size: 1.3rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
       margin-bottom: 0.75rem;
+      letter-spacing: 1px;
+      border: 1px solid var(--border-brass);
     }
 
-    .monologue {
-      font-style: italic;
-      line-height: 1.6;
-      margin: 1rem 0;
-      color: #e2e8f0;
-      background: rgba(0,0,0,0.3);
+    /* Live Speech Bubble & Streaming */
+    .speech-box {
+      background: rgba(12, 6, 4, 0.85);
+      border-left: 3px solid var(--brass);
       padding: 1rem;
       border-radius: 6px;
+      margin: 1rem 0;
+      font-style: italic;
+      color: #f1f5f9;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      min-height: 80px;
     }
 
-    .punishment-banner {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px dashed var(--danger);
-      color: #fca5a5;
-      padding: 0.75rem 1rem;
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--brass-bright);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Telemetry */
+    .telemetry {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #93c5fd;
+      background: rgba(30, 58, 138, 0.2);
+      padding: 0.4rem 0.75rem;
       border-radius: 6px;
-      font-weight: 600;
+      margin-top: 0.75rem;
+      border: 1px solid rgba(147, 197, 253, 0.2);
+    }
+
+    /* =========================================
+       OFFICIAL SHAREABLE VERDICT CARD
+       ========================================= */
+    #shareableCard {
+      background: radial-gradient(circle at 50% 30%, #301a10 0%, #180c07 70%, #0d0603 100%);
+      border: 3px double var(--brass);
+      border-radius: 12px;
+      padding: 1.75rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+      margin-bottom: 1rem;
+    }
+
+    .card-court-header {
+      text-align: center;
+      border-bottom: 1px solid var(--border-brass);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-court-header h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      color: var(--brass-bright);
+      letter-spacing: 1px;
+    }
+
+    .card-court-header p {
+      font-size: 0.8rem;
+      color: var(--brass);
+      margin-top: 0.2rem;
+    }
+
+    .ruling-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed rgba(212, 163, 89, 0.2);
+    }
+
+    .ruling-line strong {
+      color: var(--brass);
+    }
+
+    /* Red Rubber Stamp */
+    .red-stamp {
+      position: absolute;
+      top: 28px;
+      right: 18px;
+      color: var(--stamp-red);
+      border: 3px dashed var(--stamp-red);
+      font-family: 'Special Elite', monospace;
+      font-size: 1.15rem;
+      font-weight: 900;
+      padding: 0.35rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transform: rotate(-14deg);
+      border-radius: 6px;
+      opacity: 0.92;
+      text-shadow: 0 0 2px rgba(220, 38, 38, 0.4);
+      box-shadow: 0 0 10px rgba(220, 38, 38, 0.2);
+      pointer-events: none;
+    }
+
+    .punishment-box {
+      background: rgba(220, 38, 38, 0.12);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      border-radius: 6px;
+      padding: 0.75rem;
       margin-top: 1rem;
+      font-size: 0.88rem;
+      color: #fecaca;
+    }
+
+    .punishment-box strong {
+      color: #f87171;
     }
 
     .error-msg {
-      color: var(--danger);
+      color: #f87171;
       font-size: 0.85rem;
       margin-top: 0.5rem;
     }
@@ -210,86 +343,121 @@
 <body>
   <div class="container">
     <header>
-      <h1>⚖️ High Court of Pettiness</h1>
-      <p>Presided over by Justice Bhide • Theatrical Hinglish Arbitration</p>
+      <div class="court-seal">⚖️</div>
+      <h1>High Court of Pettiness</h1>
+      <p>Presided over by Justice Bhide • Theatrical Dispute Arbitration</p>
+
+      <!-- Language Switcher -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLanguage('hinglish', this)">Hinglish</button>
+        <button class="lang-btn" onclick="setLanguage('hindi', this)">हिंदी (Hindi)</button>
+        <button class="lang-btn" onclick="setLanguage('english', this)">English (Pomp)</button>
+      </div>
     </header>
 
     <!-- Stage 1: Grievance Submission -->
     <div id="stage1" class="card">
-      <div class="grid-2">
+      <div class="badge-stage">STAGE 1: FILE PETTY DISPUTE</div>
+      <div class="grid-party">
         <div>
-          <h2>📜 Party A's Complaint</h2>
-          <textarea id="claimA" placeholder="e.g. He ordered Poha again even though he promised midnight Maggi. 3 years of disrespect!">He claims Maggi is not nutritious and made Poha on our anniversary morning without asking.</textarea>
+          <h2>📜 Party A's Claim</h2>
+          <textarea id="claimA" placeholder="What is your grievance?">He insisted on ordering Poha when we clearly agreed on midnight Maggi noodles for our anniversary movie night.</textarea>
         </div>
         <div>
-          <h2>📜 Party B's Complaint</h2>
-          <textarea id="claimB" placeholder="e.g. She forgets that Maggi is basically yellow plastic noodles and Poha has fiber!">Poha is an emotion with peanuts and sev. She has the palate of a college hostel rebel.</textarea>
+          <h2>📜 Party B's Claim</h2>
+          <textarea id="claimB" placeholder="What is your side?">Maggi at 1 AM destroys gut health! Poha with roasted peanuts and lemon is culturally superior and light.</textarea>
         </div>
       </div>
-      <button id="btnCommence" class="btn" onclick="commenceTrial()">⚡ Summon Justice Bhide & Interrogate</button>
+      <button id="btnCommence" class="btn" onclick="commenceTrial()">🔨 Bang Gavel & Summon Judge</button>
       <div id="stage1Error" class="error-msg"></div>
     </div>
 
-    <!-- Crisis Support Card (Halt Mediation for Serious Harm) -->
-    <div id="crisisCard" class="card" style="display: none; border-color: #f87171; background: #1c151b;">
+    <!-- Crisis Support Card (Serious Harm Intercept) -->
+    <div id="crisisCard" class="card" style="display: none; border-color: #ef4444; background: #220f11;">
       <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">💙 Take a Pause</div>
-      <h2 style="color: #fca5a5; font-size: 1.25rem;">Mediation Suspended: Human Care First</h2>
-      <p id="crisisMessage" style="color: #e2e8f0; font-size: 1rem; line-height: 1.6; margin: 1rem 0;"></p>
+      <h2 style="color: #fca5a5; font-size: 1.15rem;">Mediation Suspended: Human Care First</h2>
+      <p id="crisisMessage" style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.6; margin: 0.8rem 0;"></p>
       
-      <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-        <h3 style="color: #fca5a5; font-size: 0.95rem; margin-bottom: 0.5rem;">Support & Crisis Resources:</h3>
-        <ul id="helplinesList" style="list-style: none; padding-left: 0; line-height: 1.8;"></ul>
+      <div style="background: rgba(0,0,0,0.4); padding: 0.9rem; border-radius: 8px; margin: 0.8rem 0;">
+        <h3 style="color: #fca5a5; font-size: 0.9rem; margin-bottom: 0.5rem;">Support & Crisis Helplines:</h3>
+        <ul id="helplinesList" style="list-style: none; padding-left: 0; line-height: 1.8; font-size: 0.88rem;"></ul>
       </div>
 
-      <button class="btn" style="background: #374151; color: white; width: auto; padding: 0.6rem 1.2rem;" onclick="resetTrial()">Return to Court</button>
-    </div>
-
-    <!-- Injection Notice Banner -->
-    <div id="injectionNotice" class="badge" style="display: none; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 0.6rem 1rem; font-size: 0.85rem; border: 1px solid #f59e0b; margin-top: 1rem;">
-      🛡️ <strong>Notice from the Bench:</strong> Adversarial injection detected and neutralized. Submission isolated strictly as untrusted witness testimony.
+      <button class="btn" style="background: #374151; color: white; width: auto; padding: 0.5rem 1rem;" onclick="resetTrial()">Return to Court</button>
     </div>
 
     <!-- Stage 2: Cross-Examination -->
     <div id="stage2" class="stage card">
-      <div class="badge">STAGE 2: CROSS-EXAMINATION</div>
-      <h2 id="issueSummary" style="color: var(--accent); margin-bottom: 1.25rem;"></h2>
+      <div class="badge-stage">STAGE 2: CROSS-EXAMINATION</div>
+      <h2 id="issueSummary" style="color: var(--brass-bright); font-size: 0.95rem; margin-bottom: 1rem;"></h2>
 
-      <div class="grid-2">
+      <div class="grid-party">
         <div>
           <h2>🔥 Question for Party A</h2>
-          <p id="qA" style="margin-bottom: 0.75rem; color: #cbd5e1;"></p>
+          <p id="qA" style="margin-bottom: 0.5rem; color: #cbd5e1; font-size: 0.9rem;"></p>
           <textarea id="ansA" placeholder="Your defensive testimony, Mylord..."></textarea>
         </div>
         <div>
           <h2>🔥 Question for Party B</h2>
-          <p id="qB" style="margin-bottom: 0.75rem; color: #cbd5e1;"></p>
+          <p id="qB" style="margin-bottom: 0.5rem; color: #cbd5e1; font-size: 0.9rem;"></p>
           <textarea id="ansB" placeholder="Your defensive testimony, Mylord..."></textarea>
         </div>
       </div>
 
       <div id="crossexamTelemetry" class="telemetry"></div>
-      <button id="btnVerdict" class="btn" style="margin-top: 1rem;" onclick="requestVerdict()">🔨 Order! Order! Deliver Verdict</button>
+      <button id="btnVerdict" class="btn" style="margin-top: 1rem;" onclick="requestStreamingVerdict()">🔨 Order in Court! Deliver Verdict</button>
       <div id="stage2Error" class="error-msg"></div>
     </div>
 
-    <!-- Stage 3: Verdict Decree -->
-    <div id="stage3" class="stage card">
-      <div class="badge">STAGE 3: THE FINAL DECREE</div>
-      <div class="verdict-box">
-        <h3 id="verdictTitle"></h3>
-        <p><strong>Winner:</strong> <span id="verdictWinner" style="color: var(--primary);"></span> | <strong>Guilty:</strong> <span id="guiltyParty" style="color: var(--danger);"></span></p>
-        <p style="margin-top: 0.5rem;"><strong>Charges Proven:</strong> <span id="charges"></span></p>
-        
-        <div class="monologue" id="monologue"></div>
+    <!-- Stage 3: Live Streaming Verdict & Shareable Card -->
+    <div id="stage3" class="stage">
+      <div class="badge-stage">STAGE 3: THE DECREE</div>
 
-        <div class="punishment-banner" id="punishment"></div>
+      <!-- Live Stream Judge Box -->
+      <div id="liveStreamBox" class="card" style="margin-bottom: 1rem;">
+        <h2>⚖️ Justice Bhide Speaking Live...</h2>
+        <div class="speech-box">
+          <span id="streamedMonologue"></span><span id="streamCursor" class="cursor-blink"></span>
+        </div>
       </div>
+
+      <!-- Shareable Certificate Card -->
+      <div id="shareableCard">
+        <div id="cardStamp" class="red-stamp">ORDER ORDER</div>
+        <div class="card-court-header">
+          <div style="font-size: 1.5rem;">⚖️</div>
+          <h3 id="cardCourtTitle">High Court of Pettiness</h3>
+          <p>OFFICIAL DECREE OF DOMESTIC ARBITRATION</p>
+        </div>
+
+        <div class="ruling-line">
+          <span>Winner: <strong id="cardWinner">--</strong></span>
+          <span>Guilty: <strong id="cardGuilty" style="color: #f87171;">--</strong></span>
+        </div>
+
+        <div style="font-size: 0.85rem; margin-bottom: 0.8rem;">
+          <span style="color: var(--brass);">Charges Proven:</span>
+          <p id="cardCharges" style="color: #f1f5f9; margin-top: 0.2rem; font-weight: 600;"></p>
+        </div>
+
+        <div style="font-size: 0.88rem; font-style: italic; line-height: 1.5; color: #e2e8f0; margin: 0.8rem 0; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px;" id="cardMonologue">
+        </div>
+
+        <div class="punishment-box">
+          <strong>⚖️ SENTENCE:</strong> <span id="cardPunishment"></span>
+          <div style="margin-top: 0.3rem;">Fine Damages: <strong style="color: #fcd34d;" id="cardFine">₹0</strong></div>
+        </div>
+      </div>
+
+      <!-- Card Action Buttons -->
+      <button class="btn" onclick="downloadVerdictCard()">📸 Export Verdict Card (PNG)</button>
       <div id="verdictTelemetry" class="telemetry"></div>
-      <button class="btn" style="margin-top: 1.5rem; background: #374151; color: white;" onclick="resetTrial()">🔄 File Another Petty Dispute</button>
+      <button class="btn" style="margin-top: 0.75rem; background: #292524; color: #d6d3d1; border-color: #57534e;" onclick="resetTrial()">🔄 Settle Another Dispute</button>
     </div>
   </div>
 
   <script>
+    let selectedLanguage = 'hinglish';
     let trialState = {
       claimA: '',
       claimB: '',
@@ -297,7 +465,43 @@
       ansB: ''
     };
 
+    function setLanguage(lang, btn) {
+      selectedLanguage = lang;
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // Zero-dependency realistic wooden gavel double-tap audio via Web Audio API
+    function playGavelSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        function strike(time, pitch) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(pitch, time);
+          osc.frequency.exponentialRampToValueAtTime(35, time + 0.18);
+          gain.gain.setValueAtTime(0.9, time);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(time);
+          osc.stop(time + 0.22);
+        }
+
+        strike(ctx.currentTime, 175);
+        strike(ctx.currentTime + 0.16, 145);
+      } catch (e) {
+        console.warn('Audio not supported:', e);
+      }
+    }
+
     async function commenceTrial() {
+      playGavelSound();
+
       const claimA = document.getElementById('claimA').value.trim();
       const claimB = document.getElementById('claimB').value.trim();
       const errEl = document.getElementById('stage1Error');
@@ -310,16 +514,16 @@
       }
 
       btn.disabled = true;
-      btn.innerText = '🛡️ Running Pre-Inference Guardrail & Interrogating...';
+      btn.innerText = '🛡️ Triage Check & Interrogating...';
 
       try {
-        // Step 1: Pre-inference multi-category guardrail on both parties
+        // Step 1: Pre-inference guardrail on both parties
         const [guardA, guardB] = await Promise.all([
           fetch('/guard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: claimA }) }).then(r => r.json()),
           fetch('/guard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: claimB }) }).then(r => r.json())
         ]);
 
-        // Check for Serious Harm -> Halt comedy completely & show care card
+        // Check for Serious Harm -> Halt comedy completely
         const harmCase = guardA.action === 'HALT_MEDIATION' ? guardA : (guardB.action === 'HALT_MEDIATION' ? guardB : null);
         if (harmCase) {
           document.getElementById('stage1').style.display = 'none';
@@ -335,22 +539,12 @@
           return;
         }
 
-        // Check for Gibberish -> Ask to re-enter
         if (guardA.action === 'REJECT_GIBBERISH' || guardB.action === 'REJECT_GIBBERISH') {
           const msg = guardA.action === 'REJECT_GIBBERISH' ? guardA.message : guardB.message;
           errEl.innerText = '⚠️ ' + msg;
           btn.disabled = false;
-          btn.innerText = '⚡ Summon Justice Bhide & Interrogate';
+          btn.innerText = '🔨 Bang Gavel & Summon Judge';
           return;
-        }
-
-        // Check for Prompt Injection -> Warn user & sandbox as untrusted witness claim
-        const hasInjection = guardA.action === 'PROCEED_AS_UNTRUSTED' || guardB.action === 'PROCEED_AS_UNTRUSTED';
-        const noticeEl = document.getElementById('injectionNotice');
-        if (hasInjection) {
-          noticeEl.style.display = 'block';
-        } else {
-          noticeEl.style.display = 'none';
         }
 
         // Step 2: Call Cross-Examination
@@ -374,8 +568,8 @@
         document.getElementById('qA').innerText = data.data.party_a_question;
         document.getElementById('qB').innerText = data.data.party_b_question;
 
-        document.getElementById('crossexamTelemetry').innerText =
-          `⚡ Latency: ${data.meta.latencyMs}ms | Tokens: In=${data.meta.inputTokens}, Out=${data.meta.outputTokens} | Model: ${data.meta.model}`;
+        document.getElementById('crossexamTelemetry').innerHTML =
+          `<span>⚡ Latency: ${data.meta.latencyMs}ms</span><span>Tokens: In=${data.meta.inputTokens}, Out=${data.meta.outputTokens}</span>`;
 
         document.getElementById('stage1').style.display = 'none';
         document.getElementById('stage2').classList.add('active');
@@ -383,11 +577,13 @@
         errEl.innerText = err.message;
       } finally {
         btn.disabled = false;
-        btn.innerText = '⚡ Summon Justice Bhide & Interrogate';
+        btn.innerText = '🔨 Bang Gavel & Summon Judge';
       }
     }
 
-    async function requestVerdict() {
+    async function requestStreamingVerdict() {
+      playGavelSound();
+
       const ansA = document.getElementById('ansA').value.trim();
       const ansB = document.getElementById('ansB').value.trim();
       const errEl = document.getElementById('stage2Error');
@@ -395,19 +591,25 @@
       errEl.innerText = '';
 
       if (!ansA || !ansB) {
-        errEl.innerText = 'Both parties must answer their cross-examination before Justice Bhide passes judgment!';
+        errEl.innerText = 'Both parties must answer before Justice Bhide passes decree!';
         return;
       }
 
       btn.disabled = true;
-      btn.innerText = '🔨 Justice Bhide is writing the decree...';
+      btn.innerText = '🔨 Justice Bhide is taking the bench...';
+
+      document.getElementById('stage2').classList.remove('active');
+      document.getElementById('stage3').classList.add('active');
+      document.getElementById('streamedMonologue').innerText = '';
+      document.getElementById('streamCursor').style.display = 'inline-block';
 
       try {
-        const res = await fetch('/verdict', {
+        const response = await fetch('/verdict/stream', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             judge_name: 'Bhide',
+            language: selectedLanguage,
             party_a_claim: trialState.claimA,
             party_b_claim: trialState.claimB,
             party_a_answer: ansA,
@@ -415,36 +617,83 @@
           })
         });
 
-        const data = await res.json();
-        if (!data.success) throw new Error(data.error || 'Failed to deliver verdict');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
 
-        const v = data.data;
-        document.getElementById('verdictTitle').innerText = v.court_title;
-        document.getElementById('verdictWinner').innerText = v.winner;
-        document.getElementById('guiltyParty').innerText = v.guilty_party;
-        document.getElementById('charges').innerText = v.charges_proven.join(', ');
-        document.getElementById('monologue').innerText = '"' + v.dramatic_monologue + '"';
-        document.getElementById('punishment').innerText =
-          `⚖️ SENTENCE: ${v.sentence.punishment} (Damages: ₹${v.sentence.fine_amount_inr})`;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        document.getElementById('verdictTelemetry').innerText =
-          `⚡ Latency: ${data.meta.latencyMs}ms | Tokens: In=${data.meta.inputTokens}, Out=${data.meta.outputTokens} | Model: ${data.meta.model}`;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n\n');
+          buffer = lines.pop();
 
-        document.getElementById('stage2').classList.remove('active');
-        document.getElementById('stage3').classList.add('active');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const payload = JSON.parse(line.substring(6));
+
+              if (payload.type === 'chunk') {
+                document.getElementById('streamedMonologue').innerText += payload.delta;
+              } else if (payload.type === 'verdict') {
+                populateVerdictCard(payload.data, payload.meta);
+                document.getElementById('streamCursor').style.display = 'none';
+              }
+            }
+          }
+        }
       } catch (err) {
-        errEl.innerText = err.message;
+        document.getElementById('streamedMonologue').innerText = 'Courtroom error: ' + err.message;
       } finally {
         btn.disabled = false;
-        btn.innerText = '🔨 Order! Order! Deliver Verdict';
+        btn.innerText = '🔨 Order in Court! Deliver Verdict';
       }
+    }
+
+    function populateVerdictCard(v, meta) {
+      document.getElementById('cardCourtTitle').innerText = v.court_title;
+      document.getElementById('cardWinner').innerText = v.winner;
+      document.getElementById('cardGuilty').innerText = v.guilty_party;
+      document.getElementById('cardCharges').innerText = v.charges_proven.join(' • ');
+      document.getElementById('cardMonologue').innerText = '"' + v.dramatic_monologue + '"';
+      document.getElementById('cardPunishment').innerText = v.sentence.punishment;
+      document.getElementById('cardFine').innerText = '₹' + v.sentence.fine_amount_inr;
+
+      // Update stamp text based on ruling
+      const stamp = document.getElementById('cardStamp');
+      if (v.winner === 'SPLIT_FAULT' || v.winner === 'MUTUAL_CONTEMPT') {
+        stamp.innerText = '50-50 FAULT';
+        stamp.style.color = '#f59e0b';
+        stamp.style.borderColor = '#f59e0b';
+      } else {
+        stamp.innerText = 'GUILTY AS CHARGED';
+        stamp.style.color = '#dc2626';
+        stamp.style.borderColor = '#dc2626';
+      }
+
+      if (meta) {
+        document.getElementById('verdictTelemetry').innerHTML =
+          `<span>⚡ Latency: ${meta.latencyMs}ms (${meta.model})</span><span>Tokens: In=${meta.inputTokens}, Out=${meta.outputTokens}</span>`;
+      }
+    }
+
+    async function downloadVerdictCard() {
+      const card = document.getElementById('shareableCard');
+      const canvas = await html2canvas(card, {
+        scale: 2,
+        backgroundColor: '#120a06',
+        useCORS: true
+      });
+      const link = document.createElement('a');
+      link.download = `verdict-justice-bhide-${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     }
 
     function resetTrial() {
       document.getElementById('stage3').classList.remove('active');
       document.getElementById('stage2').classList.remove('active');
       document.getElementById('crisisCard').style.display = 'none';
-      document.getElementById('injectionNotice').style.display = 'none';
       document.getElementById('stage1').style.display = 'block';
       document.getElementById('ansA').value = '';
       document.getElementById('ansB').value = '';
