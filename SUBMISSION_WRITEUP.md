@@ -6,13 +6,16 @@
 
 ## 1. What I Built & Why I Chose It
 
+### My Personality as the Creator
+> *"A self-aware, delightfully dramatic mediator who treats everyday absurdities with the gravity of high treason. I believe life is too short for boring conversations, bad chai, or passive-aggressive silence. I use humor not to tear people down, but to make stubborn people laugh at their own pettiness until they shake hands."*
+
 ### What It Is
 **Argument Settler** is an AI-native, multi-stage comedic arbitration platform where two friends, roommates, or partners submit their petty disputes (e.g., *Maggi vs. Poha*, *who lost the AC remote*, *who forgot the anniversary*). 
 
 Presided over by a theatrical, sharp-tongued Indian judge persona (**Justice Bhide** / **Justice Nyaypati**), the application:
 1. Runs an invisible pre-inference safety & injection guardrail.
 2. Conducts an interrogative cross-examination round targeting logical loopholes in each party's argument.
-3. Issues a definitive verdict in dramatic Hinglish complete with exaggerated charges, judicial monologues, and hilarious punitive sentences.
+3. Issues a definitive verdict in dramatic Hinglish complete with exaggerated behavioral charges, judicial monologues, and hilarious punitive sentences.
 
 ### Why This Particular Project?
 Most AI demos are either dry document summarizers or sterile chatbot wrappers. When evaluating an AI Native Software Engineer, technical rigor alone isn't enough—**taste, personality, and genuine human engagement matter**. 
