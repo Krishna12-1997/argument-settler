@@ -30,7 +30,7 @@ I deliberately decoupled the architecture into distinct model tiers based on cos
 
 | Pipeline Stage | Model / Tool | Role & Justification |
 | :--- | :--- | :--- |
-| **Pre-Inference Defense** | `claude-3-5-haiku` | **Security Guardrail**: Runs before any judge persona touches the input. Analyzes raw claims for genuine self-harm, hate speech, or prompt injection ("ignore prior instructions"). Fast (<250ms) and cost-effective. |
+| **Pre-Inference Defense** | `claude-3-5-haiku` | **4-Category Safety Triage (`/guard`)**: Runs before the judge persona. Categorizes submissions into `safe`, `serious_harm`, `prompt_injection`, or `gibberish`. If `serious_harm` is detected, it halts the comedy entirely and responds with human empathy and verified crisis helplines. If `prompt_injection` is detected, it sandboxes the input into untrusted witness tags so the judge can safely proceed and roast the attempt. Ultra-fast sub-200ms latency. |
 | **Cross-Examination** | `claude-3-5-haiku` | **Targeted Interrogator**: Quickly isolates contradictions and generates 1 sharp question for each party. High throughput keeps user momentum high. |
 | **Final Verdict & Decree** | `claude-3-5-sonnet` | **High-Reasoning Theatrical Judge**: Multi-party context digestion, nuance resolution, comedic delivery, and maintaining consistent Hinglish character without degenerating into caricature. |
 | **Output Integrity** | **Zod Schema Engine** | **Structural Gatekeeper**: In AI-native software, raw model strings are never trusted. Every response is validated against strict Zod schemas with a 1x self-healing repair retry before falling back to deterministic defaults. |
