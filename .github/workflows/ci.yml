@@ -1,0 +1,51 @@
+name: CI & AI-Native Eval Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  unit-and-integration-tests:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Vitest Suite
+        run: npm test
+
+      - name: Verify TypeScript Build
+        run: npm run build
+
+  prompt-eval-regression-gate:
+    name: Prompt Bias & Flip Rate Gate
+    runs-on: ubuntu-latest
+    # Run if prompts changed or manually dispatched
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run 35-Case Benchmark & Check Flip Rate Threshold (<15%)
+        run: npm run eval -- --mock judge.v1.txt --max-flip-rate 15

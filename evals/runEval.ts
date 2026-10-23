@@ -308,6 +308,21 @@ async function runEvaluation() {
   console.log(` Average Output Tokens                   | ${(`${avgOutputTokens} tokens`).padStart(14)} | -`);
   console.log(`========================================================================`);
   console.log(`📁 Detailed metrics saved to: evals/results/${safeFilename}.json\n`);
+
+  // ==========================
+  // CI/CD THRESHOLD GATES
+  // ==========================
+  const maxFlipRateIdx = args.indexOf('--max-flip-rate');
+  if (maxFlipRateIdx !== -1 && args[maxFlipRateIdx + 1]) {
+    const maxThreshold = parseFloat(args[maxFlipRateIdx + 1]!);
+    if (flipRatePct > maxThreshold) {
+      console.error(`🚨 REGRESSION FAILURE: Swapped Pair Flip Rate (${flipRatePct.toFixed(1)}%) exceeds allowable CI limit (${maxThreshold}%).`);
+      console.error(`   The prompt exhibits unacceptable position/recency bias. Build rejected.`);
+      process.exit(1);
+    } else {
+      console.log(`✅ CI Gate Passed: Swapped Pair Flip Rate (${flipRatePct.toFixed(1)}%) is within allowable limit (${maxThreshold}%).\n`);
+    }
+  }
 }
 
 runEvaluation().catch((err) => {
