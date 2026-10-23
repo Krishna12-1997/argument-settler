@@ -492,7 +492,6 @@ Maggi at 1 AM destroys gut health. Poha with roasted peanuts and lemon is light 
         <button class="btn" onclick="downloadVerdictCard()">
           Export Verdict PNG
         </button>
-        <div id="verdictTelemetry" class="telemetry"></div>
         <button class="btn btn-secondary" onclick="resetTrial()">
           New Dispute
         </button>
@@ -739,10 +738,6 @@ Maggi at 1 AM destroys gut health. Poha with roasted peanuts and lemon is light 
           stamp.style.borderColor = "#ef4444";
         }
 
-        if (meta) {
-          document.getElementById("verdictTelemetry").innerHTML =
-            `<span>Latency: ${meta.latencyMs}ms (${meta.model})</span><span>Tokens: In=${meta.inputTokens}, Out=${meta.outputTokens}</span>`;
-        }
       }
 
       async function downloadVerdictCard() {
