@@ -29,10 +29,14 @@ export type VerdictRequest = z.infer<typeof VerdictRequestSchema>;
 // 2. AI Output Zod Schemas
 // ==========================
 
+export const GuardClassificationEnum = z.enum(['safe', 'serious_harm', 'prompt_injection', 'gibberish']);
+export type GuardClassification = z.infer<typeof GuardClassificationEnum>;
+
 export const GuardOutputSchema = z.object({
-  is_safe: z.boolean(),
-  flagged_categories: z.array(z.string()),
-  reasoning: z.string().min(1)
+  classification: GuardClassificationEnum,
+  confidence: z.number().min(0).max(1).default(1.0),
+  reasoning: z.string().min(1),
+  caring_response: z.string().nullable().optional()
 });
 export type GuardOutput = z.infer<typeof GuardOutputSchema>;
 
@@ -65,9 +69,10 @@ export type VerdictOutput = z.infer<typeof VerdictOutputSchema>;
 // ==========================
 
 export const FallbackGuardOutput: GuardOutput = {
-  is_safe: true,
-  flagged_categories: [],
-  reasoning: 'Fallback: Guardrail passed by default safe policy.'
+  classification: 'safe',
+  confidence: 0.5,
+  reasoning: 'Fallback: Guardrail passed by default resilience policy.',
+  caring_response: null
 };
 
 export const FallbackCrossExamOutput: CrossExamOutput = {
