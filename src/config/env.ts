@@ -12,7 +12,7 @@ const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 export function getEnv(): Env {
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test' || process.env.ALLOW_EMPTY_KEY === 'true') {
     return {
       PORT: 3000,
       NODE_ENV: 'test',
@@ -22,6 +22,14 @@ export function getEnv(): Env {
 
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('⚠️ ANTHROPIC_API_KEY is missing in .env. Mock mode will be used for evaluations.');
+      return {
+        PORT: 3000,
+        NODE_ENV: 'development',
+        ANTHROPIC_API_KEY: 'mock-dummy-key'
+      };
+    }
     console.error('❌ Invalid environment variables:', result.error.format());
     throw new Error('Environment configuration error. Please check your .env file.');
   }
