@@ -33,7 +33,6 @@ jobs:
   prompt-eval-regression-gate:
     name: Prompt Bias & Flip Rate Gate
     runs-on: ubuntu-latest
-    # Run if prompts changed or manually dispatched
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

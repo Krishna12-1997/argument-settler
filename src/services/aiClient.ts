@@ -1,6 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { z } from 'zod';
-import { getEnv } from '../config/env.js';
+import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
+import { getEnv } from "../config/env.js";
 
 export interface CallTelemetry {
   latencyMs: number;
@@ -18,13 +18,12 @@ export interface AiResponse<T> {
 
 function cleanJsonString(raw: string): string {
   let text = raw.trim();
-  // Strip markdown code fences if present
-  if (text.startsWith('```json')) {
+  if (text.startsWith("```json")) {
     text = text.substring(7);
-  } else if (text.startsWith('```')) {
+  } else if (text.startsWith("```")) {
     text = text.substring(3);
   }
-  if (text.endsWith('```')) {
+  if (text.endsWith("```")) {
     text = text.slice(0, -3);
   }
   return text.trim();
@@ -36,7 +35,7 @@ export class AiClient {
   private get client(): Anthropic {
     if (!this._client) {
       this._client = new Anthropic({
-        apiKey: getEnv().ANTHROPIC_API_KEY
+        apiKey: getEnv().ANTHROPIC_API_KEY,
       });
     }
     return this._client;
@@ -50,22 +49,26 @@ export class AiClient {
     fallback: T;
     onChunk: (delta: string) => void;
   }): Promise<AiResponse<T>> {
-    const { model, systemPrompt, userPrompt, schema, fallback, onChunk } = options;
+    const { model, systemPrompt, userPrompt, schema, fallback, onChunk } =
+      options;
     const startTime = performance.now();
     let totalInputTokens = 0;
     let totalOutputTokens = 0;
 
-    let accumulated = '';
+    let accumulated = "";
     try {
       const stream = this.client.messages.stream({
         model,
         max_tokens: 1500,
         system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
+        messages: [{ role: "user", content: userPrompt }],
       });
 
       for await (const event of stream) {
-        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+        if (
+          event.type === "content_block_delta" &&
+          event.delta.type === "text_delta"
+        ) {
           accumulated += event.delta.text;
           onChunk(event.delta.text);
         }
@@ -88,12 +91,12 @@ export class AiClient {
             outputTokens: totalOutputTokens,
             model,
             retried: false,
-            usedFallback: false
-          }
+            usedFallback: false,
+          },
         };
       }
     } catch (err: any) {
-      console.warn(`[AI Stream Validation Failed] ${err.message}. Retrying via structured fallback...`);
+      console.warn(`${err.message}. Retrying via structured fallback...`);
     }
 
     return this.callStructured(options);
@@ -113,13 +116,12 @@ export class AiClient {
     let retried = false;
     let usedFallback = false;
 
-    // Helper to call Anthropic
     const callModel = async (prompt: string, sys?: string) => {
       const resp = await this.client.messages.create({
         model,
         max_tokens: 1500,
         system: sys,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: "user", content: prompt }],
       });
 
       const inputTokens = resp.usage?.input_tokens ?? 0;
@@ -128,11 +130,12 @@ export class AiClient {
       totalOutputTokens += outputTokens;
 
       const firstBlock = resp.content[0];
-      const text = firstBlock && firstBlock.type === 'text' ? firstBlock.text : '';
+      const text =
+        firstBlock && firstBlock.type === "text" ? firstBlock.text : "";
       return text;
     };
 
-    let rawText = '';
+    let rawText = "";
     try {
       rawText = await callModel(userPrompt, systemPrompt);
       const parsedJson = JSON.parse(cleanJsonString(rawText));
@@ -140,7 +143,6 @@ export class AiClient {
 
       if (validated.success) {
         const latencyMs = Math.round(performance.now() - startTime);
-        console.log(`[AI Call Success] Model: ${model} | Latency: ${latencyMs}ms | Tokens: In=${totalInputTokens}, Out=${totalOutputTokens}`);
         return {
           data: validated.data,
           telemetry: {
@@ -149,17 +151,18 @@ export class AiClient {
             outputTokens: totalOutputTokens,
             model,
             retried: false,
-            usedFallback: false
-          }
+            usedFallback: false,
+          },
         };
       } else {
-        console.warn(`[AI Schema Validation Failed] Error: ${validated.error.message}. Triggering 1x repair retry...`);
+        console.warn(
+          `${validated.error.message}. Triggering 1x repair retry...`,
+        );
       }
     } catch (err: any) {
-      console.warn(`[AI Raw Parsing Failed] Error: ${err.message}. Triggering 1x repair retry...`);
+      console.warn(`${err.message}. Triggering 1x repair retry...`);
     }
 
-    // 1x Repair Retry
     retried = true;
     try {
       const repairPrompt = `Your previous output did not conform to the expected JSON schema.
@@ -176,7 +179,6 @@ Make sure all required fields are present and valid.`;
 
       if (repairValidated.success) {
         const latencyMs = Math.round(performance.now() - startTime);
-        console.log(`[AI Retry Success] Model: ${model} | Latency: ${latencyMs}ms | Tokens: In=${totalInputTokens}, Out=${totalOutputTokens}`);
         return {
           data: repairValidated.data,
           telemetry: {
@@ -185,19 +187,17 @@ Make sure all required fields are present and valid.`;
             outputTokens: totalOutputTokens,
             model,
             retried: true,
-            usedFallback: false
-          }
+            usedFallback: false,
+          },
         };
       }
-      console.error(`[AI Retry Failed Validation] Falling back to default.`);
+      console.error(`Falling back to default.`);
     } catch (retryErr: any) {
-      console.error(`[AI Retry Exception] ${retryErr.message}. Falling back.`);
+      console.error(`${retryErr.message}. Falling back.`);
     }
 
-    // Graceful Fallback
     usedFallback = true;
     const latencyMs = Math.round(performance.now() - startTime);
-    console.warn(`[AI Using Graceful Fallback] Latency: ${latencyMs}ms | Tokens: In=${totalInputTokens}, Out=${totalOutputTokens}`);
     return {
       data: fallback,
       telemetry: {
@@ -206,8 +206,8 @@ Make sure all required fields are present and valid.`;
         outputTokens: totalOutputTokens,
         model,
         retried: true,
-        usedFallback: true
-      }
+        usedFallback: true,
+      },
     };
   }
 }

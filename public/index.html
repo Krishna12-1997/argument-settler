@@ -1,638 +1,771 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Argument Settler</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    :root {
-      --bg: #0b0f19;
-      --card: #111827;
-      --border: #1f2937;
-      --border-focus: #3b82f6;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-      --btn-primary: #2563eb;
-      --btn-primary-hover: #1d4ed8;
-      --danger: #ef4444;
-      --danger-bg: #1f1315;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Argument Settler</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+      :root {
+        --bg: #0b0f19;
+        --card: #111827;
+        --border: #1f2937;
+        --border-focus: #3b82f6;
+        --text: #f3f4f6;
+        --text-muted: #9ca3af;
+        --btn-primary: #2563eb;
+        --btn-primary-hover: #1d4ed8;
+        --danger: #ef4444;
+        --danger-bg: #1f1315;
+      }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 13px;
-      line-height: 1.5;
-      padding: 1.25rem 0.75rem;
-      display: flex;
-      justify-content: center;
-    }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 1.25rem 0.75rem;
+        display: flex;
+        justify-content: center;
+      }
 
-    .container {
-      max-width: 580px;
-      width: 100%;
-    }
+      .container {
+        max-width: 580px;
+        width: 100%;
+      }
 
-    header {
-      margin-bottom: 1rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
+      header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
 
-    h1 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.2px;
-    }
+      h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text);
+        letter-spacing: -0.2px;
+      }
 
-    header p {
-      color: var(--text-muted);
-      font-size: 12px;
-      margin-top: 2px;
-    }
+      header p {
+        color: var(--text-muted);
+        font-size: 12px;
+        margin-top: 2px;
+      }
 
-    .lang-switcher {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-    }
+      .lang-switcher {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+      }
 
-    .lang-btn {
-      background: #1f2937;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      cursor: pointer;
-    }
+      .lang-btn {
+        background: #1f2937;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        cursor: pointer;
+      }
 
-    .lang-btn.active {
-      background: #374151;
-      color: #ffffff;
-      border-color: #4b5563;
-    }
+      .lang-btn.active {
+        background: #374151;
+        color: #ffffff;
+        border-color: #4b5563;
+      }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1rem;
-      margin-bottom: 0.85rem;
-    }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 0.85rem;
+      }
 
-    .card h2 {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
+      .card h2 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
 
-    .field-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      display: block;
-    }
+      .field-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+        display: block;
+      }
 
-    .grid-party {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin-bottom: 0.85rem;
-    }
+      .grid-party {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 0.85rem;
+      }
 
-    textarea {
-      width: 100%;
-      height: 70px;
-      background: #030712;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 6px 8px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 12px;
-      line-height: 1.4;
-      resize: vertical;
-      outline: none;
-    }
+      textarea {
+        width: 100%;
+        height: 70px;
+        background: #030712;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 6px 8px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        line-height: 1.4;
+        resize: vertical;
+        outline: none;
+      }
 
-    textarea:focus {
-      border-color: var(--border-focus);
-    }
+      textarea:focus {
+        border-color: var(--border-focus);
+      }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      background: var(--btn-primary);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 7px 12px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background: var(--btn-primary);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 7px 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
 
-    .btn:hover:not(:disabled) {
-      background: var(--btn-primary-hover);
-    }
+      .btn:hover:not(:disabled) {
+        background: var(--btn-primary-hover);
+      }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .btn-secondary {
-      background: #1f2937;
-      color: var(--text);
-      border-color: #374151;
-      margin-top: 6px;
-    }
+      .btn-secondary {
+        background: #1f2937;
+        color: var(--text);
+        border-color: #374151;
+        margin-top: 6px;
+      }
 
-    .btn-secondary:hover:not(:disabled) {
-      background: #374151;
-    }
+      .btn-secondary:hover:not(:disabled) {
+        background: #374151;
+      }
 
-    .stage {
-      display: none;
-    }
+      .stage {
+        display: none;
+      }
 
-    .stage.active {
-      display: block;
-    }
+      .stage.active {
+        display: block;
+      }
 
-    .badge-stage {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #60a5fa;
-      margin-bottom: 6px;
-    }
+      .badge-stage {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #60a5fa;
+        margin-bottom: 6px;
+      }
 
-    .speech-box {
-      background: #030712;
-      border-left: 2px solid var(--btn-primary);
-      padding: 8px 10px;
-      border-radius: 4px;
-      margin: 8px 0;
-      color: #e5e7eb;
-      font-size: 12px;
-      line-height: 1.5;
-      min-height: 50px;
-    }
+      .speech-box {
+        background: #030712;
+        border-left: 2px solid var(--btn-primary);
+        padding: 8px 10px;
+        border-radius: 4px;
+        margin: 8px 0;
+        color: #e5e7eb;
+        font-size: 12px;
+        line-height: 1.5;
+        min-height: 50px;
+      }
 
-    .cursor-blink {
-      display: inline-block;
-      width: 6px;
-      height: 12px;
-      background: #60a5fa;
-      margin-left: 2px;
-      vertical-align: middle;
-      animation: blink 0.8s infinite;
-    }
+      .cursor-blink {
+        display: inline-block;
+        width: 6px;
+        height: 12px;
+        background: #60a5fa;
+        margin-left: 2px;
+        vertical-align: middle;
+        animation: blink 0.8s infinite;
+      }
 
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
-    }
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
 
-    .telemetry {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: #9ca3af;
-      background: #030712;
-      padding: 4px 8px;
-      border-radius: 4px;
-      margin-top: 6px;
-      border: 1px solid var(--border);
-    }
+      .telemetry {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #9ca3af;
+        background: #030712;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-top: 6px;
+        border: 1px solid var(--border);
+      }
 
-    /* Verdict Card */
-    #shareableCard {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 1rem;
-      position: relative;
-      margin-bottom: 0.75rem;
-    }
+      /* Verdict Card */
+      #shareableCard {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 1rem;
+        position: relative;
+        margin-bottom: 0.75rem;
+      }
 
-    .card-court-header {
-      border-bottom: 1px solid #1e293b;
-      padding-bottom: 6px;
-      margin-bottom: 8px;
-    }
+      .card-court-header {
+        border-bottom: 1px solid #1e293b;
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+      }
 
-    .card-court-header h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #f8fafc;
-    }
+      .card-court-header h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #f8fafc;
+      }
 
-    .card-court-header p {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
+      .card-court-header p {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
 
-    .ruling-line {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #1e293b;
-    }
+      .ruling-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #1e293b;
+      }
 
-    .red-stamp {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      color: #ef4444;
-      border: 1px solid #ef4444;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 6px;
-      text-transform: uppercase;
-      border-radius: 3px;
-      letter-spacing: 0.5px;
-    }
+      .red-stamp {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        color: #ef4444;
+        border: 1px solid #ef4444;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 6px;
+        text-transform: uppercase;
+        border-radius: 3px;
+        letter-spacing: 0.5px;
+      }
 
-    .punishment-box {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      border-radius: 4px;
-      padding: 8px;
-      margin-top: 8px;
-      font-size: 12px;
-      color: #fca5a5;
-    }
+      .punishment-box {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 4px;
+        padding: 8px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #fca5a5;
+      }
 
-    .error-msg {
-      color: #f87171;
-      font-size: 11px;
-      margin-top: 6px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Argument Settler</h1>
-      <p>Justice Bhide Presiding</p>
+      .error-msg {
+        color: #f87171;
+        font-size: 11px;
+        margin-top: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Argument Settler</h1>
+        <p>Justice Bhide Presiding</p>
 
-      <div class="lang-switcher">
-        <button class="lang-btn active" onclick="setLanguage('hinglish', this)">Hinglish</button>
-        <button class="lang-btn" onclick="setLanguage('hindi', this)">Hindi</button>
-        <button class="lang-btn" onclick="setLanguage('english', this)">English</button>
-      </div>
-    </header>
-
-    <!-- Stage 1 -->
-    <div id="stage1" class="card">
-      <div class="badge-stage">Stage 1: Submit Dispute</div>
-      <div class="grid-party">
-        <div>
-          <label class="field-label">Party A Claim</label>
-          <textarea id="claimA" placeholder="Enter Party A argument">He insisted on ordering Poha when we agreed on midnight Maggi for our anniversary movie night.</textarea>
+        <div class="lang-switcher">
+          <button
+            class="lang-btn active"
+            onclick="setLanguage('hinglish', this)"
+          >
+            Hinglish
+          </button>
+          <button class="lang-btn" onclick="setLanguage('hindi', this)">
+            Hindi
+          </button>
+          <button class="lang-btn" onclick="setLanguage('english', this)">
+            English
+          </button>
         </div>
-        <div>
-          <label class="field-label">Party B Claim</label>
-          <textarea id="claimB" placeholder="Enter Party B argument">Maggi at 1 AM destroys gut health. Poha with roasted peanuts and lemon is light and healthy.</textarea>
+      </header>
+
+      <!-- Stage 1 -->
+      <div id="stage1" class="card">
+        <div class="badge-stage">Stage 1: Submit Dispute</div>
+        <div class="grid-party">
+          <div>
+            <label class="field-label">Party A Claim</label>
+            <textarea id="claimA" placeholder="Enter Party A argument">
+He insisted on ordering Poha when we agreed on midnight Maggi for our anniversary movie night.</textarea
+            >
+          </div>
+          <div>
+            <label class="field-label">Party B Claim</label>
+            <textarea id="claimB" placeholder="Enter Party B argument">
+Maggi at 1 AM destroys gut health. Poha with roasted peanuts and lemon is light and healthy.</textarea
+            >
+          </div>
         </div>
+        <button id="btnCommence" class="btn" onclick="commenceTrial()">
+          Submit to Judge
+        </button>
+        <div id="stage1Error" class="error-msg"></div>
       </div>
-      <button id="btnCommence" class="btn" onclick="commenceTrial()">Submit to Judge</button>
-      <div id="stage1Error" class="error-msg"></div>
+
+      <!-- Crisis Card -->
+      <div
+        id="crisisCard"
+        class="card"
+        style="
+          display: none;
+          border-color: #ef4444;
+          background: var(--danger-bg);
+        "
+      >
+        <h2 style="color: #fca5a5">Mediation Paused: Support Resources</h2>
+        <p
+          id="crisisMessage"
+          style="color: #e5e7eb; font-size: 12px; margin: 8px 0"
+        ></p>
+
+        <div
+          style="
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            margin: 8px 0;
+          "
+        >
+          <div
+            style="
+              font-size: 11px;
+              font-weight: 600;
+              color: #fca5a5;
+              margin-bottom: 4px;
+            "
+          >
+            Helplines:
+          </div>
+          <ul
+            id="helplinesList"
+            style="list-style: none; font-size: 11px; line-height: 1.6"
+          ></ul>
+        </div>
+
+        <button
+          class="btn btn-secondary"
+          style="width: auto; padding: 4px 10px"
+          onclick="resetTrial()"
+        >
+          Back to Start
+        </button>
+      </div>
+
+      <!-- Stage 2 -->
+      <div id="stage2" class="stage card">
+        <div class="badge-stage">Stage 2: Cross Examination</div>
+        <div
+          id="issueSummary"
+          style="
+            font-weight: 600;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-bottom: 8px;
+          "
+        ></div>
+
+        <div class="grid-party">
+          <div>
+            <label class="field-label">Question for Party A</label>
+            <p
+              id="qA"
+              style="margin-bottom: 4px; color: #e5e7eb; font-size: 12px"
+            ></p>
+            <textarea id="ansA" placeholder="Party A answer"></textarea>
+          </div>
+          <div>
+            <label class="field-label">Question for Party B</label>
+            <p
+              id="qB"
+              style="margin-bottom: 4px; color: #e5e7eb; font-size: 12px"
+            ></p>
+            <textarea id="ansB" placeholder="Party B answer"></textarea>
+          </div>
+        </div>
+
+        <button
+          id="btnVerdict"
+          class="btn"
+          style="margin-top: 8px"
+          onclick="requestStreamingVerdict()"
+        >
+          Get Verdict
+        </button>
+        <div id="stage2Error" class="error-msg"></div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div id="stage3" class="stage">
+        <div class="badge-stage">Stage 3: Verdict</div>
+
+        <div id="liveStreamBox" class="card">
+          <h2>Live Monologue</h2>
+          <div class="speech-box">
+            <span id="streamedMonologue"></span
+            ><span id="streamCursor" class="cursor-blink"></span>
+          </div>
+        </div>
+
+        <div id="shareableCard">
+          <div id="cardStamp" class="red-stamp">Ruling Issued</div>
+          <div class="card-court-header">
+            <h3 id="cardCourtTitle">High Court of Pettiness</h3>
+            <p>Official Arbitration Decree</p>
+          </div>
+
+          <div class="ruling-line">
+            <span>Winner: <strong id="cardWinner">--</strong></span>
+            <span
+              >Guilty:
+              <strong id="cardGuilty" style="color: #f87171">--</strong></span
+            >
+          </div>
+
+          <div style="font-size: 11px; margin-bottom: 6px">
+            <span style="color: var(--text-muted)">Charges Proven:</span>
+            <p id="cardCharges" style="color: #f3f4f6; font-weight: 500"></p>
+          </div>
+
+          <div
+            style="
+              font-size: 12px;
+              line-height: 1.5;
+              color: #e5e7eb;
+              margin: 6px 0;
+              background: rgba(0, 0, 0, 0.3);
+              padding: 8px;
+              border-radius: 4px;
+            "
+            id="cardMonologue"
+          ></div>
+
+          <div class="punishment-box">
+            <strong>Sentence:</strong> <span id="cardPunishment"></span>
+            <div style="margin-top: 3px">
+              Fine: <strong id="cardFine">₹0</strong>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn" onclick="downloadVerdictCard()">
+          Export Verdict PNG
+        </button>
+        <div id="verdictTelemetry" class="telemetry"></div>
+        <button class="btn btn-secondary" onclick="resetTrial()">
+          New Dispute
+        </button>
+      </div>
     </div>
 
-    <!-- Crisis Card -->
-    <div id="crisisCard" class="card" style="display: none; border-color: #ef4444; background: var(--danger-bg);">
-      <h2 style="color: #fca5a5;">Mediation Paused: Support Resources</h2>
-      <p id="crisisMessage" style="color: #e5e7eb; font-size: 12px; margin: 8px 0;"></p>
-      
-      <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; margin: 8px 0;">
-        <div style="font-size: 11px; font-weight: 600; color: #fca5a5; margin-bottom: 4px;">Helplines:</div>
-        <ul id="helplinesList" style="list-style: none; font-size: 11px; line-height: 1.6;"></ul>
-      </div>
+    <script>
+      let selectedLanguage = "hinglish";
+      let trialState = {
+        claimA: "",
+        claimB: "",
+        ansA: "",
+        ansB: "",
+      };
 
-      <button class="btn btn-secondary" style="width: auto; padding: 4px 10px;" onclick="resetTrial()">Back to Start</button>
-    </div>
+      function setLanguage(lang, btn) {
+        selectedLanguage = lang;
+        document
+          .querySelectorAll(".lang-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      }
 
-    <!-- Stage 2 -->
-    <div id="stage2" class="stage card">
-      <div class="badge-stage">Stage 2: Cross Examination</div>
-      <div id="issueSummary" style="font-weight: 600; font-size: 12px; color: #93c5fd; margin-bottom: 8px;"></div>
+      function playGavelSound() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
 
-      <div class="grid-party">
-        <div>
-          <label class="field-label">Question for Party A</label>
-          <p id="qA" style="margin-bottom: 4px; color: #e5e7eb; font-size: 12px;"></p>
-          <textarea id="ansA" placeholder="Party A answer"></textarea>
-        </div>
-        <div>
-          <label class="field-label">Question for Party B</label>
-          <p id="qB" style="margin-bottom: 4px; color: #e5e7eb; font-size: 12px;"></p>
-          <textarea id="ansB" placeholder="Party B answer"></textarea>
-        </div>
-      </div>
+          function strike(time, pitch) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(pitch, time);
+            osc.frequency.exponentialRampToValueAtTime(35, time + 0.18);
+            gain.gain.setValueAtTime(0.9, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(time);
+            osc.stop(time + 0.22);
+          }
 
-      <div id="crossexamTelemetry" class="telemetry"></div>
-      <button id="btnVerdict" class="btn" style="margin-top: 8px;" onclick="requestStreamingVerdict()">Get Verdict</button>
-      <div id="stage2Error" class="error-msg"></div>
-    </div>
+          strike(ctx.currentTime, 175);
+          strike(ctx.currentTime + 0.16, 145);
+        } catch (e) {
+          console.warn("Audio not supported:", e);
+        }
+      }
 
-    <!-- Stage 3 -->
-    <div id="stage3" class="stage">
-      <div class="badge-stage">Stage 3: Verdict</div>
+      async function commenceTrial() {
+        playGavelSound();
 
-      <div id="liveStreamBox" class="card">
-        <h2>Live Monologue</h2>
-        <div class="speech-box">
-          <span id="streamedMonologue"></span><span id="streamCursor" class="cursor-blink"></span>
-        </div>
-      </div>
+        const claimA = document.getElementById("claimA").value.trim();
+        const claimB = document.getElementById("claimB").value.trim();
+        const errEl = document.getElementById("stage1Error");
+        const btn = document.getElementById("btnCommence");
+        errEl.innerText = "";
 
-      <div id="shareableCard">
-        <div id="cardStamp" class="red-stamp">Ruling Issued</div>
-        <div class="card-court-header">
-          <h3 id="cardCourtTitle">High Court of Pettiness</h3>
-          <p>Official Arbitration Decree</p>
-        </div>
-
-        <div class="ruling-line">
-          <span>Winner: <strong id="cardWinner">--</strong></span>
-          <span>Guilty: <strong id="cardGuilty" style="color: #f87171;">--</strong></span>
-        </div>
-
-        <div style="font-size: 11px; margin-bottom: 6px;">
-          <span style="color: var(--text-muted);">Charges Proven:</span>
-          <p id="cardCharges" style="color: #f3f4f6; font-weight: 500;"></p>
-        </div>
-
-        <div style="font-size: 12px; line-height: 1.5; color: #e5e7eb; margin: 6px 0; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px;" id="cardMonologue">
-        </div>
-
-        <div class="punishment-box">
-          <strong>Sentence:</strong> <span id="cardPunishment"></span>
-          <div style="margin-top: 3px;">Fine: <strong id="cardFine">₹0</strong></div>
-        </div>
-      </div>
-
-      <button class="btn" onclick="downloadVerdictCard()">Export Verdict PNG</button>
-      <div id="verdictTelemetry" class="telemetry"></div>
-      <button class="btn btn-secondary" onclick="resetTrial()">New Dispute</button>
-    </div>
-  </div>
-
-  <script>
-    let selectedLanguage = 'hinglish';
-    let trialState = {
-      claimA: '',
-      claimB: '',
-      ansA: '',
-      ansB: ''
-    };
-
-    function setLanguage(lang, btn) {
-      selectedLanguage = lang;
-      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
-
-    function playGavelSound() {
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        const ctx = new AudioContext();
-
-        function strike(time, pitch) {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(pitch, time);
-          osc.frequency.exponentialRampToValueAtTime(35, time + 0.18);
-          gain.gain.setValueAtTime(0.9, time);
-          gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(time);
-          osc.stop(time + 0.22);
+        if (!claimA || !claimB) {
+          errEl.innerText = "Both parties must enter their dispute.";
+          return;
         }
 
-        strike(ctx.currentTime, 175);
-        strike(ctx.currentTime + 0.16, 145);
-      } catch (e) {
-        console.warn('Audio not supported:', e);
-      }
-    }
+        btn.disabled = true;
+        btn.innerText = "Processing...";
 
-    async function commenceTrial() {
-      playGavelSound();
+        try {
+          const [guardA, guardB] = await Promise.all([
+            fetch("/guard", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: claimA }),
+            }).then((r) => r.json()),
+            fetch("/guard", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ text: claimB }),
+            }).then((r) => r.json()),
+          ]);
 
-      const claimA = document.getElementById('claimA').value.trim();
-      const claimB = document.getElementById('claimB').value.trim();
-      const errEl = document.getElementById('stage1Error');
-      const btn = document.getElementById('btnCommence');
-      errEl.innerText = '';
+          const harmCase =
+            guardA.action === "HALT_MEDIATION"
+              ? guardA
+              : guardB.action === "HALT_MEDIATION"
+                ? guardB
+                : null;
+          if (harmCase) {
+            document.getElementById("stage1").style.display = "none";
+            document.getElementById("crisisMessage").innerText =
+              harmCase.message;
+            const ul = document.getElementById("helplinesList");
+            ul.innerHTML = "";
+            (harmCase.helplines || []).forEach((h) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${h.name}:</strong> <span>${h.contact}</span>`;
+              ul.appendChild(li);
+            });
+            document.getElementById("crisisCard").style.display = "block";
+            return;
+          }
 
-      if (!claimA || !claimB) {
-        errEl.innerText = 'Both parties must enter their dispute.';
-        return;
-      }
+          if (
+            guardA.action === "REJECT_GIBBERISH" ||
+            guardB.action === "REJECT_GIBBERISH"
+          ) {
+            const msg =
+              guardA.action === "REJECT_GIBBERISH"
+                ? guardA.message
+                : guardB.message;
+            errEl.innerText = msg;
+            btn.disabled = false;
+            btn.innerText = "Submit to Judge";
+            return;
+          }
 
-      btn.disabled = true;
-      btn.innerText = 'Processing...';
-
-      try {
-        const [guardA, guardB] = await Promise.all([
-          fetch('/guard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: claimA }) }).then(r => r.json()),
-          fetch('/guard', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: claimB }) }).then(r => r.json())
-        ]);
-
-        const harmCase = guardA.action === 'HALT_MEDIATION' ? guardA : (guardB.action === 'HALT_MEDIATION' ? guardB : null);
-        if (harmCase) {
-          document.getElementById('stage1').style.display = 'none';
-          document.getElementById('crisisMessage').innerText = harmCase.message;
-          const ul = document.getElementById('helplinesList');
-          ul.innerHTML = '';
-          (harmCase.helplines || []).forEach(h => {
-            const li = document.createElement('li');
-            li.innerHTML = `<strong>${h.name}:</strong> <span>${h.contact}</span>`;
-            ul.appendChild(li);
+          const res = await fetch("/crossexam", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              judge_name: "Bhide",
+              party_a_claim: claimA,
+              party_b_claim: claimB,
+            }),
           });
-          document.getElementById('crisisCard').style.display = 'block';
-          return;
-        }
 
-        if (guardA.action === 'REJECT_GIBBERISH' || guardB.action === 'REJECT_GIBBERISH') {
-          const msg = guardA.action === 'REJECT_GIBBERISH' ? guardA.message : guardB.message;
-          errEl.innerText = msg;
+          const data = await res.json();
+          if (!data.success)
+            throw new Error(
+              data.error || "Failed to generate cross-examination",
+            );
+
+          trialState.claimA = claimA;
+          trialState.claimB = claimB;
+
+          document.getElementById("issueSummary").innerText =
+            "Contested Issue: " + data.data.contested_issue_summary;
+          document.getElementById("qA").innerText = data.data.party_a_question;
+          document.getElementById("qB").innerText = data.data.party_b_question;
+
+          document.getElementById("stage1").style.display = "none";
+          document.getElementById("stage2").classList.add("active");
+        } catch (err) {
+          errEl.innerText = err.message;
+        } finally {
           btn.disabled = false;
-          btn.innerText = 'Submit to Judge';
+          btn.innerText = "Submit to Judge";
+        }
+      }
+
+      async function requestStreamingVerdict() {
+        playGavelSound();
+
+        const ansA = document.getElementById("ansA").value.trim();
+        const ansB = document.getElementById("ansB").value.trim();
+        const errEl = document.getElementById("stage2Error");
+        const btn = document.getElementById("btnVerdict");
+        errEl.innerText = "";
+
+        if (!ansA || !ansB) {
+          errEl.innerText = "Both parties must answer before verdict.";
           return;
         }
 
-        const res = await fetch('/crossexam', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            judge_name: 'Bhide',
-            party_a_claim: claimA,
-            party_b_claim: claimB
-          })
-        });
+        btn.disabled = true;
+        btn.innerText = "Generating verdict...";
 
-        const data = await res.json();
-        if (!data.success) throw new Error(data.error || 'Failed to generate cross-examination');
+        document.getElementById("stage2").classList.remove("active");
+        document.getElementById("stage3").classList.add("active");
+        document.getElementById("streamedMonologue").innerText = "";
+        document.getElementById("streamCursor").style.display = "inline-block";
 
-        trialState.claimA = claimA;
-        trialState.claimB = claimB;
+        try {
+          const response = await fetch("/verdict/stream", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              judge_name: "Bhide",
+              language: selectedLanguage,
+              party_a_claim: trialState.claimA,
+              party_b_claim: trialState.claimB,
+              party_a_answer: ansA,
+              party_b_answer: ansB,
+            }),
+          });
 
-        document.getElementById('issueSummary').innerText = 'Contested Issue: ' + data.data.contested_issue_summary;
-        document.getElementById('qA').innerText = data.data.party_a_question;
-        document.getElementById('qB').innerText = data.data.party_b_question;
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder("utf-8");
+          let buffer = "";
 
-        document.getElementById('crossexamTelemetry').innerHTML =
-          `<span>Latency: ${data.meta.latencyMs}ms</span><span>Tokens: In=${data.meta.inputTokens}, Out=${data.meta.outputTokens}</span>`;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-        document.getElementById('stage1').style.display = 'none';
-        document.getElementById('stage2').classList.add('active');
-      } catch (err) {
-        errEl.innerText = err.message;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = 'Submit to Judge';
-      }
-    }
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n\n");
+            buffer = lines.pop();
 
-    async function requestStreamingVerdict() {
-      playGavelSound();
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const payload = JSON.parse(line.substring(6));
 
-      const ansA = document.getElementById('ansA').value.trim();
-      const ansB = document.getElementById('ansB').value.trim();
-      const errEl = document.getElementById('stage2Error');
-      const btn = document.getElementById('btnVerdict');
-      errEl.innerText = '';
-
-      if (!ansA || !ansB) {
-        errEl.innerText = 'Both parties must answer before verdict.';
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Generating verdict...';
-
-      document.getElementById('stage2').classList.remove('active');
-      document.getElementById('stage3').classList.add('active');
-      document.getElementById('streamedMonologue').innerText = '';
-      document.getElementById('streamCursor').style.display = 'inline-block';
-
-      try {
-        const response = await fetch('/verdict/stream', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            judge_name: 'Bhide',
-            language: selectedLanguage,
-            party_a_claim: trialState.claimA,
-            party_b_claim: trialState.claimB,
-            party_a_answer: ansA,
-            party_b_answer: ansB
-          })
-        });
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n\n');
-          buffer = lines.pop();
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const payload = JSON.parse(line.substring(6));
-
-              if (payload.type === 'chunk') {
-                document.getElementById('streamedMonologue').innerText += payload.delta;
-              } else if (payload.type === 'verdict') {
-                populateVerdictCard(payload.data, payload.meta);
-                document.getElementById('streamCursor').style.display = 'none';
+                if (payload.type === "chunk") {
+                  document.getElementById("streamedMonologue").innerText +=
+                    payload.delta;
+                } else if (payload.type === "verdict") {
+                  populateVerdictCard(payload.data, payload.meta);
+                  document.getElementById("streamCursor").style.display =
+                    "none";
+                }
               }
             }
           }
+        } catch (err) {
+          document.getElementById("streamedMonologue").innerText =
+            "Error: " + err.message;
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Get Verdict";
         }
-      } catch (err) {
-        document.getElementById('streamedMonologue').innerText = 'Error: ' + err.message;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = 'Get Verdict';
-      }
-    }
-
-    function populateVerdictCard(v, meta) {
-      document.getElementById('cardCourtTitle').innerText = v.court_title;
-      document.getElementById('cardWinner').innerText = v.winner;
-      document.getElementById('cardGuilty').innerText = v.guilty_party;
-      document.getElementById('cardCharges').innerText = v.charges_proven.join(' • ');
-      document.getElementById('cardMonologue').innerText = v.dramatic_monologue;
-      document.getElementById('cardPunishment').innerText = v.sentence.punishment;
-      document.getElementById('cardFine').innerText = '₹' + v.sentence.fine_amount_inr;
-
-      const stamp = document.getElementById('cardStamp');
-      if (v.winner === 'SPLIT_FAULT' || v.winner === 'MUTUAL_CONTEMPT') {
-        stamp.innerText = '50-50 Fault';
-        stamp.style.color = '#f59e0b';
-        stamp.style.borderColor = '#f59e0b';
-      } else {
-        stamp.innerText = 'Guilty';
-        stamp.style.color = '#ef4444';
-        stamp.style.borderColor = '#ef4444';
       }
 
-      if (meta) {
-        document.getElementById('verdictTelemetry').innerHTML =
-          `<span>Latency: ${meta.latencyMs}ms (${meta.model})</span><span>Tokens: In=${meta.inputTokens}, Out=${meta.outputTokens}</span>`;
+      function populateVerdictCard(v, meta) {
+        document.getElementById("cardCourtTitle").innerText = v.court_title;
+        document.getElementById("cardWinner").innerText = v.winner;
+        document.getElementById("cardGuilty").innerText = v.guilty_party;
+        document.getElementById("cardCharges").innerText =
+          v.charges_proven.join(" • ");
+        document.getElementById("cardMonologue").innerText =
+          v.dramatic_monologue;
+        document.getElementById("cardPunishment").innerText =
+          v.sentence.punishment;
+        document.getElementById("cardFine").innerText =
+          "₹" + v.sentence.fine_amount_inr;
+
+        const stamp = document.getElementById("cardStamp");
+        if (v.winner === "SPLIT_FAULT" || v.winner === "MUTUAL_CONTEMPT") {
+          stamp.innerText = "50-50 Fault";
+          stamp.style.color = "#f59e0b";
+          stamp.style.borderColor = "#f59e0b";
+        } else {
+          stamp.innerText = "Guilty";
+          stamp.style.color = "#ef4444";
+          stamp.style.borderColor = "#ef4444";
+        }
+
+        if (meta) {
+          document.getElementById("verdictTelemetry").innerHTML =
+            `<span>Latency: ${meta.latencyMs}ms (${meta.model})</span><span>Tokens: In=${meta.inputTokens}, Out=${meta.outputTokens}</span>`;
+        }
       }
-    }
 
-    async function downloadVerdictCard() {
-      const card = document.getElementById('shareableCard');
-      const canvas = await html2canvas(card, {
-        scale: 2,
-        backgroundColor: '#0f172a',
-        useCORS: true
-      });
-      const link = document.createElement('a');
-      link.download = `verdict-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    }
+      async function downloadVerdictCard() {
+        const card = document.getElementById("shareableCard");
+        const canvas = await html2canvas(card, {
+          scale: 2,
+          backgroundColor: "#0f172a",
+          useCORS: true,
+        });
+        const link = document.createElement("a");
+        link.download = `verdict-${Date.now()}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
 
-    function resetTrial() {
-      document.getElementById('stage3').classList.remove('active');
-      document.getElementById('stage2').classList.remove('active');
-      document.getElementById('crisisCard').style.display = 'none';
-      document.getElementById('stage1').style.display = 'block';
-      document.getElementById('ansA').value = '';
-      document.getElementById('ansB').value = '';
-    }
-  </script>
-</body>
+      function resetTrial() {
+        document.getElementById("stage3").classList.remove("active");
+        document.getElementById("stage2").classList.remove("active");
+        document.getElementById("crisisCard").style.display = "none";
+        document.getElementById("stage1").style.display = "block";
+        document.getElementById("ansA").value = "";
+        document.getElementById("ansB").value = "";
+      }
+    </script>
+  </body>
 </html>

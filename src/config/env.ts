@@ -16,21 +16,21 @@ export function getEnv(): Env {
     return {
       PORT: 3000,
       NODE_ENV: 'test',
-      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || 'test-dummy-key'
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY
     };
   }
 
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('⚠️ ANTHROPIC_API_KEY is missing in .env. Mock mode will be used for evaluations.');
+      console.warn(' API key is missing in .env. Mock mode will be used for evaluations.');
       return {
         PORT: 3000,
         NODE_ENV: 'development',
         ANTHROPIC_API_KEY: 'mock-dummy-key'
       };
     }
-    console.error('❌ Invalid environment variables:', result.error.format());
+    console.error('Invalid environment variables:', result.error.format());
     throw new Error('Environment configuration error. Please check your .env file.');
   }
   return result.data;
