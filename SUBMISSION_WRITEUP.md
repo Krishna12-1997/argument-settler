@@ -86,7 +86,17 @@ cp .env.example .env
 npm test
 ```
 
-### 4. Start the Application
+### 4. Run the Evaluation Benchmark
+Run the benchmark across 35 test cases (swapped pairs, length disparity, language disparity, and unsafe injection attacks):
+```bash
+# Offline simulation / CI mode:
+npm run eval -- --mock judge.v1.txt
+
+# Or live against Anthropic API (requires ANTHROPIC_API_KEY in .env):
+npm run eval -- judge.v1.txt
+```
+
+### 5. Start the Application
 ```bash
 # Development mode with auto-reload:
 npm run dev
