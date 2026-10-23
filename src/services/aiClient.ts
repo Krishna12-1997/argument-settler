@@ -42,6 +42,63 @@ export class AiClient {
     return this._client;
   }
 
+  public async streamStructured<T>(options: {
+    model: string;
+    systemPrompt?: string;
+    userPrompt: string;
+    schema: z.ZodSchema<T>;
+    fallback: T;
+    onChunk: (delta: string) => void;
+  }): Promise<AiResponse<T>> {
+    const { model, systemPrompt, userPrompt, schema, fallback, onChunk } = options;
+    const startTime = performance.now();
+    let totalInputTokens = 0;
+    let totalOutputTokens = 0;
+
+    let accumulated = '';
+    try {
+      const stream = this.client.messages.stream({
+        model,
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      });
+
+      for await (const event of stream) {
+        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+          accumulated += event.delta.text;
+          onChunk(event.delta.text);
+        }
+      }
+
+      const finalMsg = await stream.finalMessage();
+      totalInputTokens = finalMsg.usage?.input_tokens ?? 0;
+      totalOutputTokens = finalMsg.usage?.output_tokens ?? 0;
+
+      const parsedJson = JSON.parse(cleanJsonString(accumulated));
+      const validated = schema.safeParse(parsedJson);
+
+      if (validated.success) {
+        const latencyMs = Math.round(performance.now() - startTime);
+        return {
+          data: validated.data,
+          telemetry: {
+            latencyMs,
+            inputTokens: totalInputTokens,
+            outputTokens: totalOutputTokens,
+            model,
+            retried: false,
+            usedFallback: false
+          }
+        };
+      }
+    } catch (err: any) {
+      console.warn(`[AI Stream Validation Failed] ${err.message}. Retrying via structured fallback...`);
+    }
+
+    return this.callStructured(options);
+  }
+
   public async callStructured<T>(options: {
     model: string;
     systemPrompt?: string;

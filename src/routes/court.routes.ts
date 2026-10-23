@@ -127,6 +127,7 @@ courtRouter.post('/verdict', async (req: Request, res: Response, next: NextFunct
 
     const prompt = PromptLoader.load('judge.v1.txt', {
       judge_name: input.judge_name,
+      language: input.language || 'hinglish',
       party_a_claim: input.party_a_claim,
       party_a_answer: input.party_a_answer,
       party_b_claim: input.party_b_claim,
@@ -135,7 +136,7 @@ courtRouter.post('/verdict', async (req: Request, res: Response, next: NextFunct
 
     const result = await aiClient.callStructured({
       model: 'claude-3-5-sonnet-latest',
-      systemPrompt: `You are Justice ${input.judge_name}, the definitive presiding authority of the High Court of Pettiness. Bring full Bollywood courtroom drama and Hinglish humor. Return strictly valid JSON matching the schema.`,
+      systemPrompt: `You are Justice ${input.judge_name}, presiding authority of the High Court of Pettiness. Bring full courtroom drama. Return strictly valid JSON matching the schema.`,
       userPrompt: prompt,
       schema: VerdictOutputSchema,
       fallback: FallbackVerdictOutput
@@ -148,5 +149,47 @@ courtRouter.post('/verdict', async (req: Request, res: Response, next: NextFunct
     });
   } catch (error: any) {
     next(error);
+  }
+});
+
+// 4. POST /verdict/stream - Server-Sent Events stream for live judge speaking effect
+courtRouter.post('/verdict/stream', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const input = VerdictRequestSchema.parse(req.body);
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders?.();
+
+    const prompt = PromptLoader.load('judge.v1.txt', {
+      judge_name: input.judge_name,
+      language: input.language || 'hinglish',
+      party_a_claim: input.party_a_claim,
+      party_a_answer: input.party_a_answer,
+      party_b_claim: input.party_b_claim,
+      party_b_answer: input.party_b_answer
+    });
+
+    const result = await aiClient.streamStructured({
+      model: 'claude-3-5-sonnet-latest',
+      systemPrompt: `You are Justice ${input.judge_name}, presiding authority of the High Court of Pettiness. Bring full courtroom drama. Return strictly valid JSON matching the schema.`,
+      userPrompt: prompt,
+      schema: VerdictOutputSchema,
+      fallback: FallbackVerdictOutput,
+      onChunk: (delta: string) => {
+        res.write(`data: ${JSON.stringify({ type: 'chunk', delta })}\n\n`);
+      }
+    });
+
+    res.write(`data: ${JSON.stringify({ type: 'verdict', data: result.data, meta: result.telemetry })}\n\n`);
+    res.end();
+  } catch (error: any) {
+    if (!res.headersSent) {
+      next(error);
+    } else {
+      res.write(`data: ${JSON.stringify({ type: 'error', error: error.message })}\n\n`);
+      res.end();
+    }
   }
 });
