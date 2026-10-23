@@ -132,4 +132,52 @@ describe('Court Routes Integration', () => {
     expect(body.data.party_a_question).toContain('soggy');
     expect(body.meta.latencyMs).toBe(240);
   });
+
+  it('successfully handles /verdict/stream with Server-Sent Events', async () => {
+    vi.spyOn(aiClient, 'streamStructured').mockImplementationOnce(async (options: any) => {
+      options.onChunk('Mylord ');
+      options.onChunk('is pronouncing ');
+      options.onChunk('decree.');
+      return {
+        data: {
+          court_title: 'In the High Court of Pettiness',
+          winner: 'PARTY_A',
+          guilty_party: 'PARTY_B',
+          charges_proven: ['Maggi Sabotage'],
+          dramatic_monologue: 'Mylord is pronouncing decree.',
+          sentence: {
+            punishment: 'Cook Maggi for 7 days',
+            fine_amount_inr: 200
+          }
+        },
+        telemetry: {
+          latencyMs: 350,
+          inputTokens: 120,
+          outputTokens: 75,
+          model: 'claude-3-5-sonnet-latest',
+          retried: false,
+          usedFallback: false
+        }
+      };
+    });
+
+    const res = await fetch(`${baseUrl}/verdict/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        judge_name: 'Bhide',
+        language: 'hinglish',
+        party_a_claim: 'He refused Maggi.',
+        party_b_claim: 'Poha is healthier.',
+        party_a_answer: 'Anniversaries are for comfort food!',
+        party_b_answer: 'I wanted fiber!'
+      })
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/event-stream');
+    const text = await res.text();
+    expect(text).toContain('data: {"type":"chunk","delta":"Mylord "}');
+    expect(text).toContain('data: {"type":"verdict"');
+  });
 });
