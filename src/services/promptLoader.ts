@@ -18,7 +18,17 @@ export class PromptLoader {
 
     for (const [key, value] of Object.entries(variables)) {
       const placeholder = new RegExp(`{{${key}}}`, "g");
-      template = template.replace(placeholder, value);
+      const escapedValue = value.replace(/[&<>]/g, (character) => {
+        switch (character) {
+          case "&":
+            return "&amp;";
+          case "<":
+            return "&lt;";
+          default:
+            return "&gt;";
+        }
+      });
+      template = template.replace(placeholder, () => escapedValue);
     }
 
     return template;

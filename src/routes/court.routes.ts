@@ -1,19 +1,34 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { PromptLoader } from "../services/promptLoader.js";
 import { aiClient } from "../services/aiClient.js";
+import { classifyCourtInput } from "../services/guardService.js";
 import {
   GuardRequestSchema,
-  GuardOutputSchema,
-  FallbackGuardOutput,
   CrossExamRequestSchema,
   CrossExamOutputSchema,
   FallbackCrossExamOutput,
   VerdictRequestSchema,
   VerdictOutputSchema,
   FallbackVerdictOutput,
+  type VerdictRequest,
 } from "../schemas/court.schemas.js";
 
 export const courtRouter = Router();
+
+function buildVerdictPrompts(input: VerdictRequest) {
+  return {
+    userPrompt: PromptLoader.load("judge.v1.txt", {
+      judge_name: input.judge_name,
+      language: input.language,
+      party_a_claim: input.party_a_claim,
+      party_a_answer: input.party_a_answer,
+      party_b_claim: input.party_b_claim,
+      party_b_answer: input.party_b_answer,
+    }),
+    systemPrompt:
+      "You are the presiding authority of the High Court of Pettiness. Bring full courtroom drama. Return strictly valid JSON matching the schema.",
+  };
+}
 
 courtRouter.post(
   "/guard",
@@ -21,18 +36,17 @@ courtRouter.post(
     try {
       const input = GuardRequestSchema.parse(req.body);
 
-      const prompt = PromptLoader.load("guardrail.v2.txt", {
-        input_text: input.text,
-      });
+      const result = await classifyCourtInput(input.text);
 
-      const result = await aiClient.callStructured({
-        model: "claude-3-5-haiku-latest",
-        systemPrompt:
-          "You are an ultra-fast, objective safety triaging system for a comedic dispute resolution game. Return strictly valid JSON.",
-        userPrompt: prompt,
-        schema: GuardOutputSchema,
-        fallback: FallbackGuardOutput,
-      });
+      if (result.telemetry.usedFallback) {
+        res.status(503).json({
+          success: false,
+          action: "GUARD_UNAVAILABLE",
+          error: "Safety screening is temporarily unavailable. Please try again later.",
+          meta: result.telemetry,
+        });
+        return;
+      }
 
       const classification = result.data.classification;
 
@@ -114,7 +128,8 @@ courtRouter.post(
 
       const result = await aiClient.callStructured({
         model: "claude-3-5-haiku-latest",
-        systemPrompt: `You are Justice ${input.judge_name}, an inquisitive, sharp, dramatic Hinglish judge. Return strictly valid JSON matching the schema.`,
+        systemPrompt:
+          "You are an inquisitive, sharp, dramatic Hinglish judge. Return strictly valid JSON matching the schema.",
         userPrompt: prompt,
         schema: CrossExamOutputSchema,
         fallback: FallbackCrossExamOutput,
@@ -136,20 +151,11 @@ courtRouter.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const input = VerdictRequestSchema.parse(req.body);
-
-      const prompt = PromptLoader.load("judge.v1.txt", {
-        judge_name: input.judge_name,
-        language: input.language || "hinglish",
-        party_a_claim: input.party_a_claim,
-        party_a_answer: input.party_a_answer,
-        party_b_claim: input.party_b_claim,
-        party_b_answer: input.party_b_answer,
-      });
+      const prompts = buildVerdictPrompts(input);
 
       const result = await aiClient.callStructured({
         model: "claude-3-5-sonnet-latest",
-        systemPrompt: `You are Justice ${input.judge_name}, presiding authority of the High Court of Pettiness. Bring full courtroom drama. Return strictly valid JSON matching the schema.`,
-        userPrompt: prompt,
+        ...prompts,
         schema: VerdictOutputSchema,
         fallback: FallbackVerdictOutput,
       });
@@ -176,19 +182,11 @@ courtRouter.post(
       res.setHeader("Connection", "keep-alive");
       res.flushHeaders?.();
 
-      const prompt = PromptLoader.load("judge.v1.txt", {
-        judge_name: input.judge_name,
-        language: input.language || "hinglish",
-        party_a_claim: input.party_a_claim,
-        party_a_answer: input.party_a_answer,
-        party_b_claim: input.party_b_claim,
-        party_b_answer: input.party_b_answer,
-      });
+      const prompts = buildVerdictPrompts(input);
 
       const result = await aiClient.streamStructured({
         model: "claude-3-5-sonnet-latest",
-        systemPrompt: `You are Justice ${input.judge_name}, presiding authority of the High Court of Pettiness. Bring full courtroom drama. Return strictly valid JSON matching the schema.`,
-        userPrompt: prompt,
+        ...prompts,
         schema: VerdictOutputSchema,
         fallback: FallbackVerdictOutput,
         onChunk: (delta: string) => {

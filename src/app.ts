@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { courtRouter } from "./routes/court.routes.js";
 import { createRateLimiter } from "./middleware/rateLimiter.js";
 import { requestTimeout } from "./middleware/timeout.js";
+import { requireSafeCourtInputs } from "./middleware/aiInputGuard.js";
 
 export function createApp() {
   const app = express();
@@ -17,6 +18,7 @@ export function createApp() {
 
   app.use(express.static(path.resolve(process.cwd(), "public")));
 
+  app.use(requireSafeCourtInputs);
   app.use("/", courtRouter);
 
   app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
