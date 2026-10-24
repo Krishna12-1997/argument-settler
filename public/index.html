@@ -698,7 +698,7 @@ Maggi at 1 AM destroys gut health. Poha with roasted peanuts and lemon is light 
                   document.getElementById("streamedMonologue").innerText +=
                     payload.delta;
                 } else if (payload.type === "verdict") {
-                  populateVerdictCard(payload.data, payload.meta);
+                  populateVerdictCard(payload.data);
                   document.getElementById("streamCursor").style.display =
                     "none";
                 }
@@ -714,7 +714,7 @@ Maggi at 1 AM destroys gut health. Poha with roasted peanuts and lemon is light 
         }
       }
 
-      function populateVerdictCard(v, meta) {
+      function populateVerdictCard(v) {
         document.getElementById("cardCourtTitle").innerText = v.court_title;
         document.getElementById("cardWinner").innerText = v.winner;
         document.getElementById("cardGuilty").innerText = v.guilty_party;

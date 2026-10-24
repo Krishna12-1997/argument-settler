@@ -1,23 +1,15 @@
-# CLAUDE.md - Argument Settler Project Guidelines
+# Project Instructions
 
-## Tech Stack
-- **Runtime & Language**: Node.js + TypeScript (Strict mode)
-- **Web Framework**: Express
-- **Schema & Validation**: Zod
-- **Testing**: Vitest
+## Tools
 
-## Core Engineering Rules
-1. **Never Trust Raw Model Output**:
-   - Every AI response must be validated and parsed using a Zod schema.
-   - If parsing fails, retry once with a correction prompt.
-   - If retry fails, degrade gracefully using a deterministic fallback response.
-2. **Environment & Secrets**:
-   - API keys and sensitive credentials must only be accessed via environment variables (`process.env`).
-   - Never hardcode or commit keys or secrets.
-3. **Prompt Management**:
-   - Prompts must live in `/prompts` as versioned plain text or template files (e.g., `prompts/judge.v1.txt`, `prompts/crossexam.v1.txt`).
-   - Never embed multi-line prompt strings directly inside application code.
-4. **Git Workflow**:
-   - Small, atomic commits addressing one concern at a time.
-5. **Planning & Approvals**:
-   - Before writing code for any feature, present a concise implementation plan and wait for user approval before proceeding.
+- Use Node.js and TypeScript.
+- Use Express for the server, Zod for validation, and Vitest for tests.
+
+## Rules
+
+- Check every AI response with a Zod schema. If it is invalid, retry once. If it is still invalid, use a safe fallback.
+- Read API keys and other secrets from environment variables. Never put them in code.
+- Keep prompts in versioned text files in the `prompts` folder. Do not put long prompts in the application code.
+- Before adding a feature, explain the plan and wait for approval.
+- Keep code changes small and focused.
+- After every completed task, update PROGRESS.md before ending your turn.
